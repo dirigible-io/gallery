@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Home",
+        "link": "index.html",
+        "subMenu": []
+    },
+    {
+        "name": "Login",
+        "link": "login.html",
+        "subMenu": []
+    },
+    {
+        "name": "Register",
+        "link": "register.html",
+        "subMenu": []
+    },
+    {
+        "name": "Galleries",
+        "link": "galleries.html",
+        "subMenu": []
+    },
+    {
+        "name": "View Users",
+        "link": "view_users.html",
+        "subMenu": []
+    }
+]

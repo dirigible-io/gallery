@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<title>Database</title>
+
+<link rel="stylesheet"
+    href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/slate/bootstrap.min.css">
+<style>
+.selected-true {
+	background-color: #428bca;
+	color: white;
+}
+</style>
+</head>
+<body>
+	<div id="wrap" ng-app ng-controller="ManageController">
+		<div class="container">
+			<!--<div class="alert alert-danger" ng-show="errorMessage">-->
+			<!--	{{errorMessage}}</div>-->
+			<!--<br>-->
+            <div  class="well"><h3><strong>Registration</strong></h3></div>
+            <br>
+			<div>
+				<div class="well">
+					<label>Username</label>
+					<input type="text" class="form-control"
+						ng-model="newEntry.user_name">
+					<br> 
+					<label>Password</label>
+					<input type="text" class="form-control"
+						ng-model="newEntry.user_password">
+					<br> 
+    				<label>Email</label>
+					<input type="text" class="form-control"
+						ng-model="newEntry.user_email">
+                    <br>
+				</div>
+				<div class="btn-group">
+					<input class="btn btn-primary" type="button" value="Register"
+						ng-click="confirmAction()"> 
+					<input class="btn btn-default" type="button" value="Cancel" 
+						ng-click="cancelAction()">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-resource.min.js"></script>
+
+	<script type="text/javascript">
+		function ManageController($scope, $http){
+			
+			var url = '/dirigible/js/Gallery/users.js';
+			
+			$http.get(url)
+    		.success(function(data){
+				$scope.data = data;
+			});
+			
+            $scope.newEntry = null;
+            $scope.errorMessage = null;
+			
+            $scope.confirmAction = function(){
+                $scope.newEntry.user_login = 'false';
+                register($scope.newEntry);
+            }
+
+            $scope.cancelAction = function(){
+                refreshData();
+            }
+                    
+			function register(entry){
+                var unique_name = true; 
+                for(var i = 0 ; i < $scope.data.length; i ++){
+                    if($scope.data[i].user_name == entry.user_name){
+                            unique_name = false;
+                    }
+				}
+                if(unique_name){
+                    delete $scope.newEntry._selected_; 
+                    $http.post(url, entry)
+                    .success(function(){
+                        refreshData();
+                        $scope.selectedEntry = null;
+                        $scope.operation = 'show';
+                        $scope.newEntry = null;
+                        $scope.errorMessage = null;
+    				})
+    				.error(function(response){
+    					$scope.errorMessage = response.err.message;
+                        alert($scope.errorMessage);
+    				});
+			    }else{
+    		        alert('Username already exists!');   
+			    }
+			}
+                    
+			function refreshData(){
+				$http.get(url)
+				.success(function(data){
+					$scope.data = data;
+                	$scope.newEntry = null;
+                    $scope.selectedEntry = null;
+                    $scope.operation = 'show';
+                    $scope.errorMessage = null;
+				})
+				.error(function(response){
+					$scope.errorMessage = response.err.message;
+				});
+			}
+		}
+	</script>
+</body>
+</html>

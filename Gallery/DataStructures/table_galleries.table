@@ -1,0 +1,32 @@
+{
+  "tableName":"TABLE_GALLERIES",
+  "columns":
+    [
+      {
+        "name":"GALLERY_ID",
+        "type":"INTEGER",
+        "length":"0",
+        "notNull":"true",
+        "primaryKey":"true",
+        "defaultValue":""
+      }
+      ,
+      {
+        "name":"OWNER_ID",
+        "type":"INTEGER",
+        "length":"0",
+        "notNull":"true",
+        "primaryKey":"false",
+        "defaultValue":""
+      }
+      ,
+      {
+        "name":"GALLERY_NAME",
+        "type":"VARCHAR",
+        "length":"30",
+        "notNull":"true",
+        "primaryKey":"false",
+        "defaultValue":""
+      }
+    ]
+}

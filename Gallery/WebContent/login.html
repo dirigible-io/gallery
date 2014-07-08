@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html ng-app="Sample">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		
+		<title>Login</title>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
+		<link href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/slate/bootstrap.min.css" rel="stylesheet">
+	</head>
+	<body>
+		<div class="container" ng-controller="Controller">
+			<div class="well"><h3><strong>Login</strong></h3></div>
+			<div class="well">				
+				<div class="input-group col-lg-4" ng-hide="loggedIn">
+					<span class="input-group-addon">@</span>
+					<input type="text" class="form-control" placeholder="Username" ng-model="username">
+				</div>
+				<br ng-hide="loggedIn">
+				<div class="input-group col-lg-4" ng-hide="loggedIn">
+					<span class="input-group-addon">@</span>
+					<input type="password" class="form-control" placeholder="Password" ng-model="password">
+				</div>
+				<br ng-hide="loggedIn">
+                <h3 ng-show="loggedIn">Welcome user {{username}}</h3>
+                <br>
+                <button type="button" class="btn btn-primary" ng-show="loggedIn"><a href="galleries.html">View galleries</a></button>
+				<button type="button" class="btn btn-primary" ng-click="login()" ng-disabled="!username || !password">{{loginButtonLabel}}</button>
+                <button type="button" class="btn btn-primary" ng-hide="loggedIn"><a href="register.html">Register</a></button>
+			</div>
+			<div ng-show="loggedIn">
+				<div class="alert alert-info">
+					<h4>User <strong>{{username}}</strong> logged in!</h4>
+				</div>
+			</div>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-cookies.js"></script>
+		<script>
+			var app = angular.module('Sample',[]);
+            // var cookies = angular.module('Sample', ['ngCookies']);
+            
+            // cookies.controller('Controller', ['$scope','$cookieStore',
+            //     function($scope,$cookieStore){
+            //         $scope.setCookie = function(){
+            //             //alert('Setting cookie ' +  $scope.username);
+            //             $cookieStore.put('user', $scope.username);
+            //         }
+                    
+            //         $scope.getCookie = function($scope,$cookieStore){
+            //             alert('das');
+            //             var current_user = $cookieStore.get('user');
+            //             alert('Getting cookie ' + current_user);
+            //             if(current_use != ""){
+            //                 $scope.username = current_user;
+            //                 $scope.login();                            
+            //             }
+            //         }
+            //         $scope.getCookie();
+                    
+            //         $scope.removeCookie = function(){
+            //             $cookieStore.remove('user');
+            //         }    
+            //     }
+            // ]);
+            
+            
+            app.controller('Controller', [ '$scope','$http',
+				function($scope,$http) {
+					$scope.users = [];
+					$scope.username;
+					$scope.password;
+					$scope.loggedIn;
+					$scope.loginButtonLabel = "Login";
+					
+                    var url = '/dirigible/js/Gallery/users.js';
+            
+                    $http.get(url)
+                    .success(function(data){
+            			$scope.users = data;
+        			});
+                    
+					$scope.login = function(){
+                        if($scope.loginButtonLabel == "Login"){
+                            var found = false; 
+                            for(var i = 0 ; i < $scope.users.length; i ++){
+                                if($scope.users[i].user_name == $scope.username){
+                                    found = true;
+                                    $scope.loginButtonLabel = "Logout";
+        							$scope.loggedIn = true;
+                                    //setCookie("username", $scope.username, 30);
+                                    //$scope.setCookie();
+                                    break;
+                                }
+                			}
+							if(!found){
+								alert('User '+$scope.username+' is not registered! Please register first!');
+							}else if(found && !$scope.loggedIn){
+								alert('Invalid username and/or password');
+							}
+						} else {
+							$scope.username = "";
+							$scope.password = "";
+							$scope.loginButtonLabel = "Login";
+							$scope.loggedIn = false;
+						}
+					}
+                    
+ 
+				} 
+            ]);
+        </script>
+	</body>
+</html>
