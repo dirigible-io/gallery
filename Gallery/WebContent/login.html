@@ -43,7 +43,7 @@
 
 <!-- GALLERIES -->
 	<div id="wrap" ng-show="loggedIn">
-        
+        <div class="well"><h3><strong>{{username}}'s galleries</strong></h3></div>
 		<div class="container">
 			<div class="alert alert-danger" ng-show="errorMessage">
 				{{errorMessage}}</div>
@@ -109,7 +109,7 @@
 	<script type="text/javascript">
         var myApp = angular.module('myApp', []);
 
-        var Controller = function($scope, $http){
+        var Controller = function($scope, $http, $window){
 			$scope.users = [];
 			$scope.username;
             $scope.user_id;
@@ -159,20 +159,22 @@
             $scope.operation = 'show';
             $scope.newEntry = null;
             $scope.errorMessage = null;
+            $scope.selectedGallery = '';
 			
             $scope.getGalleries = function(){
                 $scope.data.length = 0; 
                 $http.get(url)
 			    .success(function(galleries){
-                for(var i = 0 ; i < galleries.length; i++){
-                    if(galleries[i].owner_id == $scope.user_id){
-                        $scope.data.push(galleries[i]);
-                    }
-    			}
+                    for(var i = 0 ; i < galleries.length; i++){
+                        if(galleries[i].owner_id == $scope.user_id){
+                            $scope.data.push(galleries[i]);
+                        }
+        			}
 			    });
             }
             
 			$scope.showInfoForEntry = function(entry) {
+                $scope.selectedGallery = entry.gallery_id;
 				if($scope.operation==='show'){
 					if($scope.selectedEntry === entry){
 						$scope.showEntry = false;
@@ -190,7 +192,12 @@
 			}
 					
             $scope.openGallery = function(){
-                
+                if($scope.selectedGallery != ''){
+                    var encodedParam = 'photos.html/?gallery=' + $scope.selectedGallery;
+                    $window.open(encodedParam);
+                }else{
+                    alert('Please selec a gallery first!');                    
+                }
             }
             
 			$scope.setOperation = function(operation){
@@ -318,6 +325,7 @@
                     $scope.selectedEntry = null;
                     $scope.operation = 'show';
                     $scope.errorMessage = null;
+                    $scope.selectedGallery = '';
 				})
 				.error(function(response){
 					$scope.errorMessage = response.err.message;

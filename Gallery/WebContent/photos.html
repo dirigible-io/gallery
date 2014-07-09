@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<title>Photos</title>
+
+<link rel="stylesheet"
+	href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/slate/bootstrap.min.css">
+<style>
+.selected-true {
+	background-color: #428bca;
+	color: white;
+}
+</style>
+</head>
+<body ng-app ng-controller="ManageController" ng-init="getPhotos()">
+	<div id="wrap">
+		<div class="container">
+			<div class="alert alert-danger" ng-show="errorMessage">
+				{{errorMessage}}</div>
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>photo_id</th>
+						<th>gallery_id</th>
+						<th>photo_name</th>
+						<th>photo_url</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="selected-{{entry._selected_}}" ng-repeat="entry in data"
+						ng-click="showInfoForEntry(entry)">
+						<td>{{entry.photo_id}}</td> 
+						<td>{{entry.gallery_id}}</td> 
+						<td>{{entry.photo_name}}</td> 
+						<td>{{entry.photo_url}}</td> 
+					</tr>
+				</tbody>
+			</table>
+			<hr>
+			<br>
+			<div class="btn-group">
+				<input class="btn btn-default" type="button" value="Add new photo"
+					ng-click="setOperation('new')" ng-disabled="errorMessage || operation == 'update'">
+                    
+                    <input class="btn btn-default" type="button" value="Open photo"
+        			ng-click="openPhoto(entry)" ng-disabled="errorMessage || operation == 'new' || operation == 'update'">
+                    
+                    <input class="btn btn-default" type="button" value="Edit photo"
+					ng-click="setOperation('update')" ng-disabled="errorMessage || operation == 'new'"> 
+                    
+                    <input class="btn btn-default" type="button" value="Delete photo"
+					ng-click="delete()"	ng-disabled="errorMessage || operation == 'new' || operation == 'update'">
+			</div>
+			<br> <br>
+			<div>
+				<div ng-show="operation == 'new'">
+					<label>gallery_id</label> 
+					<input type="text" class="form-control" 
+						ng-model="newEntry.gallery_id">
+					<br>
+					<label>photo_name</label> 
+					<input type="text" class="form-control" 
+						ng-model="newEntry.photo_name">
+					<br>
+					<label>photo_url</label> 
+					<input type="text" class="form-control" 
+						ng-model="newEntry.photo_url">
+					<br>
+				</div>
+				<div ng-show="operation == 'update'">
+					<label>gallery_id</label> 
+					<input type="text" class="form-control"
+						ng-model="selectedEntry.gallery_id"> 
+					<br>
+					<label>photo_name</label> 
+					<input type="text" class="form-control"
+						ng-model="selectedEntry.photo_name"> 
+					<br>
+					<label>photo_url</label> 
+					<input type="text" class="form-control"
+						ng-model="selectedEntry.photo_url"> 
+					<br>
+				</div>
+				<div class="btn-group">
+					<input class="btn btn-primary" type="button" value="Save" ng-show="operation == 'new' || operation == 'update'"
+						ng-click="confirmAction()"> 
+					<input class="btn btn-default" type="button" value="Cancel" ng-show="operation == 'new' || operation == 'update'"
+						ng-click="cancelAction()">
+				</div>
+			</div>
+            
+            
+            <!--<form action="/dirigible/js/Gallery/photo_upload.js" method="post" enctype="multipart/form-data">-->
+            <!--<label for="file">Filename:-->
+            <!--<input type="file" name="file" id="file" multiple>-->
+            <!--<br>-->
+            <!--<input type="submit" name="submit" value="Submit">-->
+            <!--</form>-->
+            
+            
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-resource.min.js"></script>
+    <!--<script src='/dirigible/js/Gallery/photo_upload.js'></script>-->
+
+	<script type="text/javascript">
+		function ManageController($scope, $http, $location, $window){
+			
+			var url = '/dirigible/js/Gallery/photos.js';
+			
+            $scope.getPhotos = function(){
+                $scope.data.length = 0; 
+                $http.get(url)
+        	    .success(function(photos){
+                    for(var i = 0 ; i < photos.length; i++){
+                        if(photos[i].gallery_id == $scope.current_gallery){
+                            $scope.data.push(photos[i]);
+                        }
+        			}
+			    })
+                .error(function(response){
+    				$scope.errorMessage = response.err.message;
+                    alert($scope.errorMessage);
+				});
+            }
+			
+            $scope.current_gallery = $location.absUrl().split('/?gallery=')[1];
+            $scope.data = [];
+            $scope.selectedPhoto = '';
+			$scope.selectedEntry;
+            $scope.operation = 'show';
+            $scope.newEntry = null;
+            $scope.errorMessage = null;
+			
+			$scope.showInfoForEntry = function(entry) {
+                $scope.selectedPhoto = entry.photo_url;
+				if($scope.operation==='show'){
+					if($scope.selectedEntry === entry){
+						$scope.showEntry = false;
+						$scope.selectedEntry = null;
+						entry._selected_ = false;
+					}else{
+						for(var i = 0 ; i < $scope.data.length; i ++){
+							$scope.data[i]._selected_ = false;
+						}
+						entry._selected_ = true;
+						$scope.showEntry = true;
+						$scope.selectedEntry = entry;
+					}
+				}
+			}
+            
+            $scope.openPhoto = function(){
+                if($scope.selectedPhoto != ''){
+                    var url = $scope.selectedPhoto;
+                    $window.open(url);
+                }else{
+                    alert('Please selec a gallery first!');                    
+                }
+            }
+					
+			$scope.setOperation = function(operation){
+              switch(operation){
+                  case 'new':
+                      if($scope.operation != 'new'){
+                          $scope.operation = 'new';
+                      }else{
+                          $scope.operation = 'show';
+                      }
+                      break;
+                  case 'update':
+                       if($scope.operation != 'update'){
+                      	 if($scope.selectedEntry){
+                               $scope.operation = 'update';
+                           }else{
+                               alert("Please first select entry for updated");
+                               $scope.operation = 'show';
+                           }
+                      }else{
+                          $scope.operation = 'show';
+                      }
+                      break;
+                  case 'delete':
+                      if($scope.operation != 'delete'){
+                          $scope.operation = 'delete';
+                      }else{
+                          $scope.operation = 'show';
+                      }
+                      break;
+                  default:
+                      $scope.operation = 'show';
+                      break;
+               }
+            }
+                    
+            $scope.confirmAction = function(){
+                switch($scope.operation){
+                    case 'new':
+                        newEntry($scope.newEntry);
+                        break;
+                    case 'update':
+                        updateEntry($scope.selectedEntry);
+                        break;
+                }
+            }
+
+            $scope.cancelAction = function(){
+                refreshData();
+            }
+
+           $scope.delete = function(){
+        	   if($scope.selectedEntry){
+                 	var confirmed = confirm('Do you realy want to delete the selected entry?');
+               	if(confirmed){
+                   	delete $scope.selectedEntry._selected_;
+                       deleteEntry($scope.selectedEntry);
+                       $scope.operation = 'show';
+               	}                    	
+               }else{
+                   alert('Please select row from the table.');
+               }
+           }
+                    
+			function newEntry(entry){
+				delete $scope.newEntry._selected_;
+				$http.post(url, entry)
+				.success(function(){
+					refreshData();
+					$scope.selectedEntry = null;
+                    $scope.operation = 'show';
+                    $scope.newEntry = null;
+                    $scope.errorMessage = null;
+				})
+				.error(function(response){
+					$scope.errorMessage = response.err.message;
+				});
+			}
+			
+			function updateEntry(entry){
+				delete $scope.selectedEntry._selected_;
+				$http.put(url, entry)
+				.success(function(){
+					refreshData();
+                    $scope.operation = 'show';
+                    $scope.errorMessage = null;
+				})
+				.error(function(response){
+					$scope.errorMessage = response.err.message;
+				});
+			}
+					
+			function deleteEntry(entry){
+				var primaryKey;
+				primaryKey = "photo_id";
+				var deleteUrl = url+"?"+primaryKey+"="+entry[primaryKey];
+				$http.delete(deleteUrl)
+				.success(function(){
+					refreshData();
+                    $scope.selectedEntry = null;
+					$scope.errorMessage = null;
+				})
+				.error(function(response){
+					$scope.errorMessage = response.err.message;
+				})
+			}
+                    
+			function refreshData(){
+				$http.get(url)
+				.success(function(data){
+					$scope.data = data;
+                	$scope.newEntry = null;
+                    $scope.selectedEntry = null;
+                    $scope.operation = 'show';
+                    $scope.errorMessage = null;
+                    $scope.selectedPhoto = '';
+				})
+				.error(function(response){
+					$scope.errorMessage = response.err.message;
+				});
+			}
+		}
+	</script>
+</body>
+</html>

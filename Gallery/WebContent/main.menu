@@ -15,13 +15,18 @@
         "subMenu": []
     },
     {
+        "name": "View Users",
+        "link": "view_users.html",
+        "subMenu": []
+    },
+    {
         "name": "View Galleries",
         "link": "view_galleries.html",
         "subMenu": []
     },
     {
-        "name": "View Users",
-        "link": "view_users.html",
+        "name": "View Photos",
+        "link": "view_photos.html",
         "subMenu": []
     }
 ]
