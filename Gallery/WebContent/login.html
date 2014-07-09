@@ -1,118 +1,329 @@
 <!DOCTYPE html>
-<html ng-app="Sample">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta name="description" content="">
-		<meta name="author" content="">
-		
-		<title>Login</title>
-		
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
-		<link href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/slate/bootstrap.min.css" rel="stylesheet">
-	</head>
-	<body>
-		<div class="container" ng-controller="Controller">
-			<div class="well"><h3><strong>Login</strong></h3></div>
-			<div class="well">				
-				<div class="input-group col-lg-4" ng-hide="loggedIn">
-					<span class="input-group-addon">@</span>
-					<input type="text" class="form-control" placeholder="Username" ng-model="username">
-				</div>
-				<br ng-hide="loggedIn">
-				<div class="input-group col-lg-4" ng-hide="loggedIn">
-					<span class="input-group-addon">@</span>
-					<input type="password" class="form-control" placeholder="Password" ng-model="password">
-				</div>
-				<br ng-hide="loggedIn">
-                <h3 ng-show="loggedIn">Welcome user {{username}}</h3>
-                <br>
-                <button type="button" class="btn btn-primary" ng-show="loggedIn"><a href="galleries.html">View galleries</a></button>
-				<button type="button" class="btn btn-primary" ng-click="login()" ng-disabled="!username || !password">{{loginButtonLabel}}</button>
-                <button type="button" class="btn btn-primary" ng-hide="loggedIn"><a href="register.html">Register</a></button>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<title>Galleries</title>
+
+<link rel="stylesheet"
+    href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/slate/bootstrap.min.css">
+<style>
+.selected-true {
+    background-color: #428bca;
+	color: white;
+}
+</style>
+</head>
+<body ng-app="myApp" ng-controller="Controller">
+    <div>
+        <div class="well" ng-hide="loggedIn"><h3><strong>Login</strong></h3></div>
+    	<div class="well">				
+			<div class="input-group col-lg-4" ng-hide="loggedIn">
+				<span class="input-group-addon">@</span>
+				<input type="text" class="form-control" placeholder="Username" ng-model="username">
 			</div>
-			<div ng-show="loggedIn">
-				<div class="alert alert-info">
-					<h4>User <strong>{{username}}</strong> logged in!</h4>
+			<br ng-hide="loggedIn">
+			<div class="input-group col-lg-4" ng-hide="loggedIn">
+				<span class="input-group-addon">@</span>
+				<input type="password" class="form-control" placeholder="Password" ng-model="password">
+			</div>
+			<br ng-hide="loggedIn">
+            <h3 ng-show="loggedIn">Welcome user {{username}}</h3>
+            <br>
+            <!--<button type="button" class="btn btn-primary" ng-show="loggedIn"><a href="galleries.html">View galleries</a></button>-->
+			<button type="button" class="btn btn-primary" ng-click="login()" ng-disabled="!username || !password">{{loginButtonLabel}}</button>
+            <button type="button" class="btn btn-primary" ng-hide="loggedIn"><a href="register.html">Register</a></button>
+		</div>
+    </div>
+
+
+<!-- GALLERIES -->
+	<div id="wrap" ng-show="loggedIn">
+        
+		<div class="container">
+			<div class="alert alert-danger" ng-show="errorMessage">
+				{{errorMessage}}</div>
+			<table class="table table-condensed">
+				<thead>
+					<tr>
+						<th>gallery_id</th>
+						<th>owner_id</th>
+						<th>gallery_name</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="selected-{{entry._selected_}}" ng-repeat="entry in data"
+						ng-click="showInfoForEntry(entry)">
+						<td>{{entry.gallery_id}}</td> 
+						<td>{{entry.owner_id}}</td> 
+						<td>{{entry.gallery_name}}</td> 
+					</tr>
+				</tbody>
+			</table>
+			<hr>
+			<br>
+			<div class="btn-group">
+				<input class="btn btn-default" type="button" value="Create new gallery"
+					ng-click="setOperation('new')" ng-disabled="errorMessage || operation == 'update'">
+                    
+                <input class="btn btn-default" type="button" value="Open gallery"
+    				ng-click="openGallery()" ng-disabled="errorMessage || operation == 'new' || operation == 'update'">
+                    
+                <input class="btn btn-default" type="button" value="Edit gallery"
+					ng-click="setOperation('update')" ng-disabled="errorMessage || operation == 'new'">
+                    
+                <input class="btn btn-default" type="button" value="Delete gallery"
+					ng-click="delete()"	ng-disabled="errorMessage || operation == 'new' || operation == 'update'">
+			</div>
+			<br> <br>
+			<div ng-show="operation == 'new' || operation == 'update'">
+				<div  ng-show="operation == 'new'">
+					<label>gallery_name</label>
+					<input type="text" class="form-control"
+						ng-model="newEntry.gallery_name">
+					<br> 
+				</div>
+				<div ng-show="operation == 'update'">
+					<label>gallery_name</label> 
+					<input type="text" class="form-control"
+						ng-model="selectedEntry.gallery_name"> 
+					<br>
+				</div>
+				<div class="btn-group">
+					<input class="btn btn-primary" type="button" value="Save" ng-show="operation == 'new' || operation == 'update'"
+						ng-click="confirmAction()"> 
+					<input class="btn btn-default" type="button" value="Cancel" ng-show="operation == 'new' || operation == 'update'"
+						ng-click="cancelAction()">
 				</div>
 			</div>
 		</div>
-		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-cookies.js"></script>
-		<script>
-			var app = angular.module('Sample',[]);
-            // var cookies = angular.module('Sample', ['ngCookies']);
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-resource.min.js"></script>
+
+	<script type="text/javascript">
+        var myApp = angular.module('myApp', []);
+
+        var Controller = function($scope, $http){
+			$scope.users = [];
+			$scope.username;
+            $scope.user_id;
+			$scope.password;
+			$scope.loggedIn;
+			$scope.loginButtonLabel = "Login";
             
-            // cookies.controller('Controller', ['$scope','$cookieStore',
-            //     function($scope,$cookieStore){
-            //         $scope.setCookie = function(){
-            //             //alert('Setting cookie ' +  $scope.username);
-            //             $cookieStore.put('user', $scope.username);
-            //         }
-                    
-            //         $scope.getCookie = function($scope,$cookieStore){
-            //             alert('das');
-            //             var current_user = $cookieStore.get('user');
-            //             alert('Getting cookie ' + current_user);
-            //             if(current_use != ""){
-            //                 $scope.username = current_user;
-            //                 $scope.login();                            
-            //             }
-            //         }
-            //         $scope.getCookie();
-                    
-            //         $scope.removeCookie = function(){
-            //             $cookieStore.remove('user');
-            //         }    
-            //     }
-            // ]);
+            var users_url = '/dirigible/js/Gallery/users.js';
             
+            $http.get(users_url)    
+            .success(function(user_data){
+    			$scope.users = user_data;
+			});
             
-            app.controller('Controller', [ '$scope','$http',
-				function($scope,$http) {
-					$scope.users = [];
-					$scope.username;
-					$scope.password;
-					$scope.loggedIn;
-					$scope.loginButtonLabel = "Login";
-					
-                    var url = '/dirigible/js/Gallery/users.js';
-            
-                    $http.get(url)
-                    .success(function(data){
-            			$scope.users = data;
-        			});
-                    
-					$scope.login = function(){
-                        if($scope.loginButtonLabel == "Login"){
-                            var found = false; 
-                            for(var i = 0 ; i < $scope.users.length; i ++){
-                                if($scope.users[i].user_name == $scope.username){
-                                    found = true;
-                                    $scope.loginButtonLabel = "Logout";
-        							$scope.loggedIn = true;
-                                    //setCookie("username", $scope.username, 30);
-                                    //$scope.setCookie();
-                                    break;
-                                }
-                			}
-							if(!found){
-								alert('User '+$scope.username+' is not registered! Please register first!');
-							}else if(found && !$scope.loggedIn){
-								alert('Invalid username and/or password');
-							}
-						} else {
-							$scope.username = "";
-							$scope.password = "";
-							$scope.loginButtonLabel = "Login";
-							$scope.loggedIn = false;
-						}
+			$scope.login = function($rootScope){
+                if($scope.loginButtonLabel == "Login"){
+                    var found = false; 
+                    for(var i = 0 ; i < $scope.users.length; i ++){
+                        if($scope.users[i].user_name == $scope.username){
+                            $scope.user_id = $scope.users[i].user_id;
+                            found = true;
+                            $scope.loginButtonLabel = "Logout";
+							$scope.loggedIn = true;
+                            $scope.getGalleries();
+                            break;
+                        }
+        			}
+					if(!found){
+						alert('User '+$scope.username+' is not registered! Please register first!');
+					}else if(found && !$scope.loggedIn){
+						alert('Invalid username and/or password');
 					}
+				} else {
+					$scope.username = "";
+					$scope.password = "";
+					$scope.loginButtonLabel = "Login";
+					$scope.loggedIn = false;
+				}
+                $rootScope.loggedIn = $scope.loggedIn;
+			}
+
+// GALLERIES
+            var url = '/dirigible/js/Gallery/galleries.js';
+			
+            $scope.data = [];            
+			$scope.selectedEntry;
+            $scope.operation = 'show';
+            $scope.newEntry = null;
+            $scope.errorMessage = null;
+			
+            $scope.getGalleries = function(){
+                $scope.data.length = 0; 
+                $http.get(url)
+			    .success(function(galleries){
+                for(var i = 0 ; i < galleries.length; i++){
+                    if(galleries[i].owner_id == $scope.user_id){
+                        $scope.data.push(galleries[i]);
+                    }
+    			}
+			    });
+            }
+            
+			$scope.showInfoForEntry = function(entry) {
+				if($scope.operation==='show'){
+					if($scope.selectedEntry === entry){
+						$scope.showEntry = false;
+						$scope.selectedEntry = null;
+						entry._selected_ = false;
+					}else{
+						for(var i = 0 ; i < $scope.data.length; i ++){
+							$scope.data[i]._selected_ = false;
+						}
+						entry._selected_ = true;
+						$scope.showEntry = true;
+						$scope.selectedEntry = entry;
+					}
+				}
+			}
+					
+            $scope.openGallery = function(){
+                
+            }
+            
+			$scope.setOperation = function(operation){
+                  switch(operation){
+                      case 'new':
+                          if($scope.operation != 'new'){
+                              $scope.operation = 'new';
+                          }else{
+                              $scope.operation = 'show';
+                          }
+                          break;
+                      case 'update':
+                           if($scope.operation != 'update'){
+                          	 if($scope.selectedEntry){
+                                   $scope.operation = 'update';
+                               }else{
+                                   alert("Please first select a gallery first!");
+                                   $scope.operation = 'show';
+                               }
+                          }else{
+                              $scope.operation = 'show';
+                          }
+                          break;
+                      case 'delete':
+                          if($scope.operation != 'delete'){
+                              $scope.operation = 'delete';
+                          }else{
+                              $scope.operation = 'show';
+                          }
+                          break;
+                      default:
+                          $scope.operation = 'show';
+                          break;
+                   }
+            }
                     
- 
-				} 
-            ]);
-        </script>
-	</body>
+            $scope.confirmAction = function(){
+                switch($scope.operation){
+                    case 'new':
+                        newEntry($scope.newEntry);
+                        break;
+                    case 'update':
+                        updateEntry($scope.selectedEntry);
+                        break;
+                }
+            }
+
+            $scope.cancelAction = function(){
+                refreshData();
+            }
+
+           $scope.delete = function(){
+        	   if($scope.selectedEntry){
+                 	var confirmed = confirm('Do you realy want to delete the selected entry?');
+               	if(confirmed){
+                   	delete $scope.selectedEntry._selected_;
+                       deleteEntry($scope.selectedEntry);
+                       $scope.operation = 'show';
+               	}                    	
+               }else{
+                   alert('Please select row from the table.');
+               }
+           }
+                    
+			function newEntry(entry){
+				var unique_name = true; 
+                for(var i = 0 ; i < $scope.data.length; i ++){
+                    if($scope.data[i].gallery_name == entry.gallery_name){
+                        unique_name = false;
+                    }
+    			}
+                if(unique_name){
+                    delete $scope.newEntry._selected_;
+                    entry.owner_id = $scope.user_id;
+    				$http.post(url, entry)
+    				.success(function(){
+    					refreshData();
+    					$scope.selectedEntry = null;
+                        $scope.operation = 'show';
+                        $scope.newEntry = null;
+                        $scope.errorMessage = null;
+    				})
+    				.error(function(response){
+    					$scope.errorMessage = response.err.message;
+    				});
+                }else{
+                    alert('Gallery with the same name already exists!'); 
+                }
+			}
+			
+			function updateEntry(entry){
+				delete $scope.selectedEntry._selected_;
+				$http.put(url, entry)
+				.success(function(){
+					refreshData();
+                    $scope.operation = 'show';
+                    $scope.errorMessage = null;
+				})
+				.error(function(response){
+					$scope.errorMessage = response.err.message;
+				});
+			}
+					
+			function deleteEntry(entry){
+				var primaryKey;
+				primaryKey = "gallery_id";
+				var deleteUrl = url+"?"+primaryKey+"="+entry[primaryKey];
+				$http.delete(deleteUrl)
+				.success(function(){
+					refreshData();
+                    $scope.selectedEntry = null;
+					$scope.errorMessage = null;
+				})
+				.error(function(response){
+					$scope.errorMessage = response.err.message;
+				})
+			}
+                    
+			function refreshData(){
+				$http.get(url)
+				.success(function(data){
+					//$scope.data = data;
+                    $scope.getGalleries();
+                	$scope.newEntry = null;
+                    $scope.selectedEntry = null;
+                    $scope.operation = 'show';
+                    $scope.errorMessage = null;
+				})
+				.error(function(response){
+					$scope.errorMessage = response.err.message;
+				});
+			}
+		}
+	</script>
+</body>
 </html>

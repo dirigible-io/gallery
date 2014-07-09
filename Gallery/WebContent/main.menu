@@ -15,8 +15,8 @@
         "subMenu": []
     },
     {
-        "name": "Galleries",
-        "link": "galleries.html",
+        "name": "View Galleries",
+        "link": "view_galleries.html",
         "subMenu": []
     },
     {
