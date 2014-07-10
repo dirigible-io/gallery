@@ -36,7 +36,7 @@
             <br>
             <!--<button type="button" class="btn btn-primary" ng-show="loggedIn"><a href="galleries.html">View galleries</a></button>-->
 			<button type="button" class="btn btn-primary" ng-click="login()" ng-disabled="!username || !password">{{loginButtonLabel}}</button>
-            <button type="button" class="btn btn-primary" ng-hide="loggedIn"><a href="register.html">Register</a></button>
+            <button type="button" class="btn btn-primary" ng-click="goToRegisterPage()" ng-hide="loggedIn">Register</button>
 		</div>
     </div>
 
@@ -190,7 +190,11 @@
 					}
 				}
 			}
-					
+		    
+            $scope.goToRegisterPage = function(){
+                $window.open("register.html");
+            }
+            
             $scope.openGallery = function(){
                 if($scope.selectedGallery != ''){
                     var encodedParam = 'photos.html/?gallery=' + $scope.selectedGallery;

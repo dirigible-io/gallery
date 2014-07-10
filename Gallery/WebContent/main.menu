@@ -1,10 +1,5 @@
 [
     {
-        "name": "Home",
-        "link": "index.html",
-        "subMenu": []
-    },
-    {
         "name": "Login",
         "link": "login.html",
         "subMenu": []
