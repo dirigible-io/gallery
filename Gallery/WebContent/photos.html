@@ -96,20 +96,22 @@
 			</div>
             
             
-            <!--<form action="/dirigible/js/Gallery/photo_upload.js" method="post" enctype="multipart/form-data">-->
-            <!--<label for="file">Filename:-->
-            <!--<input type="file" name="file" id="file" multiple>-->
-            <!--<br>-->
-            <!--<input type="submit" name="submit" value="Submit">-->
-            <!--</form>-->
+            <form action="/dirigible/js/Gallery/photo_upload.js" method="post" enctype="multipart/form-data">
+            <label for="file">Filename:
+            <input type="file" name="file" id="file" multiple>
+            <br>
+            <input type="submit" name="submit" value="Submit">
+            </form>
+            <br><br>
             
+            <img src="https://dirigiblep1940734210trial.hanatrial.ondemand.com/dirigible/js/Gallery/photo_download.js?fileName=lama-face-2.jpg" width="256px" height="256px" alt=""/>
             
 		</div>
 	</div>
 
+    <script scr="/dirigible/js/Gallery/photo_download.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-resource.min.js"></script>
-    <!--<script src='/dirigible/js/Gallery/photo_upload.js'></script>-->
 
 	<script type="text/javascript">
 		function ManageController($scope, $http, $location, $window){
@@ -132,6 +134,7 @@
 				});
             }
 			
+            $scope.photo_url;
             $scope.current_gallery = $location.absUrl().split('/?gallery=')[1];
             $scope.data = [];
             $scope.selectedPhoto = '';
@@ -140,6 +143,10 @@
             $scope.newEntry = null;
             $scope.errorMessage = null;
 			
+            $scope.collect = function(form){
+                alert(form.nm.value);
+            }
+            
 			$scope.showInfoForEntry = function(entry) {
                 $scope.selectedPhoto = entry.photo_url;
 				if($scope.operation==='show'){
