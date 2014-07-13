@@ -9,5 +9,4 @@ if(request.getMethod()=="POST"){
     }
     response.setContentType("text/json");
     response.getWriter().println(JSON.stringify(storedFiles));
-    return false;
 }

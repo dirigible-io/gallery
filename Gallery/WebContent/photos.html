@@ -95,16 +95,16 @@
 				</div>
 			</div>
             
-            
-            <form action="/dirigible/js/Gallery/photo_upload.js" method="post" enctype="multipart/form-data">
-            <label for="file">Filename:
-            <input type="file" name="file" id="file" multiple>
-            <br>
-            <input type="submit" name="submit" value="Submit">
+            <iframe name="formDestination" style="display: none;"></iframe>
+            <form action="/dirigible/js/Gallery/photo_upload.js" ng-submit="addPhotoToDatabase()" method="post" enctype="multipart/form-data" target="formDestination">
+                <label for="file">Filename:
+                <input type="file" name="file" id="file" multiple>
+                <br>
+                <input type="submit" name="submit" value="Submit">
             </form>
             <br><br>
             
-            <img src="https://dirigiblep1940734210trial.hanatrial.ondemand.com/dirigible/js/Gallery/photo_download.js?fileName=lama-face-2.jpg" width="256px" height="256px" alt=""/>
+            <img id="photo-1" src="https://dirigiblep1940734210trial.hanatrial.ondemand.com/dirigible/js/Gallery/photo_download.js?fileName=lama-face-2.jpg" width="256px" height="256px" alt=""/>
             
 		</div>
 	</div>
@@ -117,6 +117,7 @@
 		function ManageController($scope, $http, $location, $window){
 			
 			var url = '/dirigible/js/Gallery/photos.js';
+            var photo_begining = "https://dirigiblep1940734210trial.hanatrial.ondemand.com/dirigible/js/Gallery/photo_download.js?fileName=";
 			
             $scope.getPhotos = function(){
                 $scope.data.length = 0; 
@@ -134,6 +135,7 @@
 				});
             }
 			
+            $scope.photo_name = "";
             $scope.photo_url;
             $scope.current_gallery = $location.absUrl().split('/?gallery=')[1];
             $scope.data = [];
@@ -143,10 +145,16 @@
             $scope.newEntry = null;
             $scope.errorMessage = null;
 			
-            $scope.collect = function(form){
-                alert(form.nm.value);
+            $scope.addPhotoToDatabase = function(){
+                $scope.photo_name = document.getElementById('file').value.split('fakepath\\')[1];
+                var data = {
+                    "gallery_id": $scope.current_gallery,
+                    "photo_name": $scope.photo_name,
+                    "photo_url": $scope.photo_name
+                }
+                newEntry(data);
             }
-            
+
 			$scope.showInfoForEntry = function(entry) {
                 $scope.selectedPhoto = entry.photo_url;
 				if($scope.operation==='show'){
@@ -167,8 +175,10 @@
             
             $scope.openPhoto = function(){
                 if($scope.selectedPhoto != ''){
-                    var url = $scope.selectedPhoto;
-                    $window.open(url);
+                    var url = photo_begining + $scope.selectedPhoto;
+                    document.getElementById("photo-1").src = url;
+                    //console.log(url);
+                    //$window.open(url);
                 }else{
                     alert('Please selec a gallery first!');                    
                 }
@@ -237,7 +247,8 @@
            }
                     
 			function newEntry(entry){
-				delete $scope.newEntry._selected_;
+                console.log(entry);
+				// delete $scope.newEntry._selected_;
 				$http.post(url, entry)
 				.success(function(){
 					refreshData();
@@ -248,6 +259,7 @@
 				})
 				.error(function(response){
 					$scope.errorMessage = response.err.message;
+                    alert($scope.errorMessage);
 				});
 			}
 			
