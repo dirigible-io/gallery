@@ -23,33 +23,9 @@
 		<div class="container">
 			<div class="alert alert-danger" ng-show="errorMessage">
 				{{errorMessage}}</div>
-			<table class="table table-condensed">
-				<thead>
-					<tr>
-						<th>photo_id</th>
-						<th>gallery_id</th>
-						<th>photo_name</th>
-						<th>photo_url</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="selected-{{entry._selected_}}" ng-repeat="entry in data"
-						ng-click="showInfoForEntry(entry)">
-						<td>{{entry.photo_id}}</td> 
-						<td>{{entry.gallery_id}}</td> 
-						<td>{{entry.photo_name}}</td> 
-						<td>{{entry.photo_url}}</td> 
-					</tr>
-				</tbody>
-			</table>
-			<hr>
-			<br>
 			<div class="btn-group">
 				<input class="btn btn-default" type="button" value="Add new photo"
 					ng-click="setOperation('new')" ng-disabled="errorMessage || operation == 'update'">
-                    
-                    <input class="btn btn-default" type="button" value="Open photo"
-        			ng-click="openPhoto(entry)" ng-disabled="errorMessage || operation == 'new' || operation == 'update'">
                     
                     <input class="btn btn-default" type="button" value="Edit photo"
 					ng-click="setOperation('update')" ng-disabled="errorMessage || operation == 'new'"> 
@@ -60,52 +36,33 @@
 			<br> <br>
 			<div>
 				<div ng-show="operation == 'new'">
-					<label>gallery_id</label> 
-					<input type="text" class="form-control" 
-						ng-model="newEntry.gallery_id">
-					<br>
-					<label>photo_name</label> 
-					<input type="text" class="form-control" 
-						ng-model="newEntry.photo_name">
-					<br>
-					<label>photo_url</label> 
-					<input type="text" class="form-control" 
-						ng-model="newEntry.photo_url">
-					<br>
+					<iframe name="formDestination" style="display: none;"></iframe>
+                    <form action="/dirigible/js/Gallery/photo_upload.js" ng-submit="addPhotoToDatabase()" method="post" enctype="multipart/form-data" target="formDestination">
+                        <label for="file">Filename:
+                        <input type="file" name="file" id="file" multiple>
+                        <br>
+                        <input type="submit" name="submit" value="Submit">
+                    </form>
+                    <br><br>
 				</div>
 				<div ng-show="operation == 'update'">
-					<label>gallery_id</label> 
-					<input type="text" class="form-control"
-						ng-model="selectedEntry.gallery_id"> 
-					<br>
 					<label>photo_name</label> 
 					<input type="text" class="form-control"
 						ng-model="selectedEntry.photo_name"> 
 					<br>
-					<label>photo_url</label> 
-					<input type="text" class="form-control"
-						ng-model="selectedEntry.photo_url"> 
-					<br>
 				</div>
 				<div class="btn-group">
-					<input class="btn btn-primary" type="button" value="Save" ng-show="operation == 'new' || operation == 'update'"
+					<input class="btn btn-primary" type="button" value="Save" ng-show="operation == 'update'"
 						ng-click="confirmAction()"> 
 					<input class="btn btn-default" type="button" value="Cancel" ng-show="operation == 'new' || operation == 'update'"
 						ng-click="cancelAction()">
 				</div>
 			</div>
             
-            <iframe name="formDestination" style="display: none;"></iframe>
-            <form action="/dirigible/js/Gallery/photo_upload.js" ng-submit="addPhotoToDatabase()" method="post" enctype="multipart/form-data" target="formDestination">
-                <label for="file">Filename:
-                <input type="file" name="file" id="file" multiple>
-                <br>
-                <input type="submit" name="submit" value="Submit">
-            </form>
-            <br><br>
-            
-            <img id="photo-1" src="https://dirigiblep1940734210trial.hanatrial.ondemand.com/dirigible/js/Gallery/photo_download.js?fileName=lama-face-2.jpg" width="256px" height="256px" alt=""/>
-            
+            <div class="selected-{{photo._selected_}}" ng-click="showInfoForEntry(photo)" ng-repeat="photo in data" style="float:left; padding:5px;"><br>
+                <img ng-click="" ng-src="https://dirigiblep1940734210trial.hanatrial.ondemand.com/dirigible/js/Gallery/photo_download.js?fileName={{photo.photo_url}}" width="256px" height="256px" alt=""/>
+                
+            </div>
 		</div>
 	</div>
 
@@ -117,8 +74,7 @@
 		function ManageController($scope, $http, $location, $window){
 			
 			var url = '/dirigible/js/Gallery/photos.js';
-            var photo_begining = "https://dirigiblep1940734210trial.hanatrial.ondemand.com/dirigible/js/Gallery/photo_download.js?fileName=";
-			
+            
             $scope.getPhotos = function(){
                 $scope.data.length = 0; 
                 $http.get(url)
@@ -173,17 +129,6 @@
 				}
 			}
             
-            $scope.openPhoto = function(){
-                if($scope.selectedPhoto != ''){
-                    var url = photo_begining + $scope.selectedPhoto;
-                    document.getElementById("photo-1").src = url;
-                    //console.log(url);
-                    //$window.open(url);
-                }else{
-                    alert('Please selec a gallery first!');                    
-                }
-            }
-					
 			$scope.setOperation = function(operation){
               switch(operation){
                   case 'new':
@@ -247,8 +192,6 @@
            }
                     
 			function newEntry(entry){
-                console.log(entry);
-				// delete $scope.newEntry._selected_;
 				$http.post(url, entry)
 				.success(function(){
 					refreshData();
@@ -294,7 +237,7 @@
 			function refreshData(){
 				$http.get(url)
 				.success(function(data){
-					$scope.data = data;
+                    $scope.getPhotos();
                 	$scope.newEntry = null;
                     $scope.selectedEntry = null;
                     $scope.operation = 'show';

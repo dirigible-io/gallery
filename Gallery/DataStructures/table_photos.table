@@ -23,7 +23,7 @@
       {
         "name":"PHOTO_NAME",
         "type":"VARCHAR",
-        "length":"30",
+        "length":"100",
         "notNull":"true",
         "primaryKey":"false",
         "defaultValue":""
