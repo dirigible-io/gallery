@@ -309,8 +309,10 @@
 				var primaryKey;
 				primaryKey = "gallery_id";
 				var deleteUrl = url+"?"+primaryKey+"="+entry[primaryKey];
+                alert(deleteUrl);
 				$http.delete(deleteUrl)
 				.success(function(){
+                    deletePhotosInGallery(entry);
 					refreshData();
                     $scope.selectedEntry = null;
 					$scope.errorMessage = null;
@@ -319,11 +321,26 @@
 					$scope.errorMessage = response.err.message;
 				})
 			}
-                    
+                 
+            function deletePhotosInGallery(entry){
+                var photos_url = '/dirigible/js/Gallery/photos.js';
+                $http.get(photos_url)
+                .success(function(photos){
+                    for(var i = 0 ; i < photos.length; i++){
+                        if(photos[i].gallery_id == entry["gallery_id"]){
+                            var deleteUrl = photos_url  + "?" + "photo_id" + "=" + photos[i].photo_id;
+                            $http.delete(deleteUrl)
+                            .success(function(){
+                                alert("Gallery and all the photos in it successfully deleted!")
+                            })
+                        }
+        			}
+			    })
+            }
+                 
 			function refreshData(){
 				$http.get(url)
 				.success(function(data){
-					//$scope.data = data;
                     $scope.getGalleries();
                 	$scope.newEntry = null;
                     $scope.selectedEntry = null;

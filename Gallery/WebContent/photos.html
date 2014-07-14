@@ -27,6 +27,9 @@
 				<input class="btn btn-default" type="button" value="Add new photo"
 					ng-click="setOperation('new')" ng-disabled="errorMessage || operation == 'update'">
                     
+                    <input class="btn btn-default" type="button" value="Download photo"
+            		ng-click="downloadPhoto()" ng-disabled="errorMessage || operation == 'new' || operation == 'update'">
+                    
                     <input class="btn btn-default" type="button" value="Edit photo"
 					ng-click="setOperation('update')" ng-disabled="errorMessage || operation == 'new'"> 
                     
@@ -74,6 +77,7 @@
 		function ManageController($scope, $http, $location, $window){
 			
 			var url = '/dirigible/js/Gallery/photos.js';
+            var photo_begining = "https://dirigiblep1940734210trial.hanatrial.ondemand.com/dirigible/js/Gallery/photo_download.js?fileName=";
             
             $scope.getPhotos = function(){
                 $scope.data.length = 0; 
@@ -103,12 +107,24 @@
 			
             $scope.addPhotoToDatabase = function(){
                 $scope.photo_name = document.getElementById('file').value.split('fakepath\\')[1];
+                $scope.photo_url = $scope.photo_name;
+                if($scope.photo_name.length > 40){
+                    $scope.photo_name = $scope.photo_name.substring(0,20);
+                }
                 var data = {
                     "gallery_id": $scope.current_gallery,
                     "photo_name": $scope.photo_name,
-                    "photo_url": $scope.photo_name
+                    "photo_url": $scope.photo_url
                 }
                 newEntry(data);
+            }
+
+            $scope.downloadPhoto = function(){
+                if($scope.selectedPhoto != ''){
+                    $window.open(photo_begining + $scope.selectedPhoto);
+                }else{
+                    alert('Please selec a photo first!');                    
+                }
             }
 
 			$scope.showInfoForEntry = function(entry) {
@@ -233,7 +249,7 @@
 					$scope.errorMessage = response.err.message;
 				})
 			}
-                    
+            
 			function refreshData(){
 				$http.get(url)
 				.success(function(data){
