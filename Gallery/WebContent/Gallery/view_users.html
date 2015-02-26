@@ -7,7 +7,7 @@
 <meta name="description" content="">
 <meta name="author" content="">
 
-<title>View Photos</title>
+<title>View Users</title>
 
 <link rel="stylesheet"
 	href="//maxcdn.bootstrapcdn.com/bootswatch/3.2.0/slate/bootstrap.min.css">
@@ -26,19 +26,21 @@
 			<table class="table table-condensed">
 				<thead>
 					<tr>
-						<th>photo_id</th>
-						<th>gallery_id</th>
-						<th>photo_name</th>
-						<th>photo_url</th>
+						<th>user_id</th>
+						<th>user_name</th>
+						<th>user_password</th>
+						<th>user_email</th>
+						<th>user_login</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr class="selected-{{entry._selected_}}" ng-repeat="entry in data"
 						ng-click="showInfoForEntry(entry)">
-						<td>{{entry.photo_id}}</td> 
-						<td>{{entry.gallery_id}}</td> 
-						<td>{{entry.photo_name}}</td> 
-						<td>{{entry.photo_url}}</td> 
+						<td>{{entry.user_id}}</td> 
+						<td>{{entry.user_name}}</td> 
+						<td>{{entry.user_password}}</td> 
+						<td>{{entry.user_email}}</td> 
+						<td>{{entry.user_login}}</td> 
 					</tr>
 				</tbody>
 			</table>
@@ -58,56 +60,68 @@
 			<br> <br>
 			<div>
 				<div ng-show="operation == 'show'">
-					<label>photo_id</label>
+					<label>user_id</label>
 					<input type="text" class="form-control"
-						ng-model="selectedEntry.photo_id" readonly>
+						ng-model="selectedEntry.user_id" readonly>
 					<br> 
-					<label>gallery_id</label>
+					<label>user_name</label>
 					<input type="text" class="form-control"
-						ng-model="selectedEntry.gallery_id" readonly>
+						ng-model="selectedEntry.user_name" readonly>
 					<br> 
-					<label>photo_name</label>
+					<label>user_password</label>
 					<input type="text" class="form-control"
-						ng-model="selectedEntry.photo_name" readonly>
+						ng-model="selectedEntry.user_password" readonly>
 					<br> 
-					<label>photo_url</label>
+					<label>user_email</label>
 					<input type="text" class="form-control"
-						ng-model="selectedEntry.photo_url" readonly>
+						ng-model="selectedEntry.user_email" readonly>
+					<br> 
+					<label>user_login</label>
+					<input type="text" class="form-control"
+						ng-model="selectedEntry.user_login" readonly>
 					<br> 
 				</div>
 				<div ng-show="operation == 'new'">
-					<label>photo_id</label> 
+					<label>user_id</label> 
 					<input type="text"
 						class="form-control" value="Auto Generated" readonly> <br>
-					<label>gallery_id</label> 
+					<label>user_name</label> 
 					<input type="text" class="form-control" 
-						ng-model="newEntry.gallery_id">
+						ng-model="newEntry.user_name">
 					<br>
-					<label>photo_name</label> 
+					<label>user_password</label> 
 					<input type="text" class="form-control" 
-						ng-model="newEntry.photo_name">
+						ng-model="newEntry.user_password">
 					<br>
-					<label>photo_url</label> 
+					<label>user_email</label> 
 					<input type="text" class="form-control" 
-						ng-model="newEntry.photo_url">
+						ng-model="newEntry.user_email">
+					<br>
+					<label>user_login</label> 
+					<input type="text" class="form-control" 
+						ng-model="newEntry.user_login">
 					<br>
 				</div>
 				<div ng-show="operation == 'update'">
-					<label>photo_id</label>
+					<label>user_id</label>
 					<input type="text" class="form-control" 
-						ng-model="selectedEntry.photo_id" readonly>
+						ng-model="selectedEntry.user_id" readonly>
 					<br> 
-					<label>gallery_id</label> 
+					<label>user_name</label> 
 					<input type="text" class="form-control"
-						ng-model="selectedEntry.gallery_id"> 
+						ng-model="selectedEntry.user_name"> 
 					<br>
-					<label>photo_name</label> 
+					<label>user_password</label> 
 					<input type="text" class="form-control"
-						ng-model="selectedEntry.photo_name"> 
+						ng-model="selectedEntry.user_password"> 
 					<br>
-					<label>photo_url</label> 
+					<label>user_email</label> 
 					<input type="text" class="form-control"
-						ng-model="selectedEntry.photo_url"> 
+						ng-model="selectedEntry.user_email"> 
+					<br>
+					<label>user_login</label> 
+					<input type="text" class="form-control"
+						ng-model="selectedEntry.user_login"> 
 					<br>
 				</div>
 				<div class="btn-group">
@@ -126,7 +140,7 @@
 	<script type="text/javascript">
 		function ManageController($scope, $http){
 			
-			var url = '/dirigible/js/Gallery/photos.js';
+			var url = '/dirigible/services/js/Gallery/users.js';
 			
 			$http.get(url)
 			.success(function(data){
@@ -249,7 +263,7 @@
 					
 			function deleteEntry(entry){
 				var primaryKey;
-				primaryKey = "photo_id";
+				primaryKey = "user_id";
 				var deleteUrl = url+"?"+primaryKey+"="+entry[primaryKey];
 				$http.delete(deleteUrl)
 				.success(function(){

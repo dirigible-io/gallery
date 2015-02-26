@@ -117,7 +117,7 @@
 			$scope.loggedIn;
 			$scope.loginButtonLabel = "Login";
             
-            var users_url = '/dirigible/js/Gallery/users.js';
+            var users_url = '/dirigible/services/js/Gallery/users.js';
             
             $http.get(users_url)    
             .success(function(user_data){
@@ -152,7 +152,7 @@
 			}
 
 // GALLERIES
-            var url = '/dirigible/js/Gallery/galleries.js';
+            var url = '/dirigible/services/js/Gallery/galleries.js';
 			
             $scope.data = [];            
 			$scope.selectedEntry;
@@ -323,7 +323,7 @@
 			}
                  
             function deletePhotosInGallery(entry){
-                var photos_url = '/dirigible/js/Gallery/photos.js';
+                var photos_url = '/dirigible/services/js/Gallery/photos.js';
                 $http.get(photos_url)
                 .success(function(photos){
                     for(var i = 0 ; i < photos.length; i++){

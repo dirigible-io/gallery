@@ -40,7 +40,7 @@
 			<div>
 				<div ng-show="operation == 'new'">
 					<iframe name="formDestination" style="display: none;"></iframe>
-                    <form action="/dirigible/js/Gallery/photo_upload.js" ng-submit="addPhotoToDatabase()" method="post" enctype="multipart/form-data" target="formDestination">
+                    <form action="/dirigible/services/js/Gallery/photo_upload.js" ng-submit="addPhotoToDatabase()" method="post" enctype="multipart/form-data" target="formDestination">
                         <label for="file">Filename:
                         <input type="file" name="file" id="file" multiple>
                         <br>
@@ -63,21 +63,21 @@
 			</div>
             
             <div class="selected-{{photo._selected_}}" ng-click="showInfoForEntry(photo)" ng-repeat="photo in data" style="float:left; padding:5px;"><br>
-                <img ng-click="" ng-src="https://dirigiblep1940734210trial.hanatrial.ondemand.com/dirigible/js/Gallery/photo_download.js?fileName={{photo.photo_url}}" width="256px" height="256px" alt=""/>
+                <img ng-click="" ng-src="/dirigible/services/js/Gallery/photo_download.js?fileName={{photo.photo_url}}" width="256px" height="256px" alt=""/>
                 
             </div>
 		</div>
 	</div>
 
-    <script scr="/dirigible/js/Gallery/photo_download.js"></script>
+    <script scr="/dirigible/services/js/Gallery/photo_download.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.2/angular-resource.min.js"></script>
 
 	<script type="text/javascript">
 		function ManageController($scope, $http, $location, $window){
 			
-			var url = '/dirigible/js/Gallery/photos.js';
-            var photo_begining = "https://dirigiblep1940734210trial.hanatrial.ondemand.com/dirigible/js/Gallery/photo_download.js?fileName=";
+			var url = '/dirigible/services/js/Gallery/photos.js';
+            var photo_begining = "/dirigible/services/js/Gallery/photo_download.js?fileName=";
             
             $scope.getPhotos = function(){
                 $scope.data.length = 0; 
